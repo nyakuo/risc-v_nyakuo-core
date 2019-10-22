@@ -1,25 +1,13 @@
 module reg_file (
-  input logic rst,
-  input logic [31:0] addr,
-  input logic [31:0] idata,
-  output logic [31:0] out
+  input logic rw_i, // read or write
+  input logic [31:0] addr_i,
+  input logic [31:0] data_i,
+  output logic [31:0] out_o
 );
 
   logic [31:0] [0:31] regs;
 
-  int i;
-
-  assign begin
-    // reset
-    if (rst == 1'b1) begin
-      for (i=0; i<32; ++i) begin
-        regs[i] = 0;
-      end
-    end
-    else begin
-      out = regs[addr]; 
-      regs[addr] = idata;
-    end
-  end
+  assign out_o = ~rw_i & regs[addr_i];
+  assign regs[addr] = rw_i ? data_i : regs[addr_i];
 
 endmodule
