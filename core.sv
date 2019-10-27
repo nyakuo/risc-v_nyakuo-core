@@ -1,4 +1,4 @@
-import nyakuo_pkg::*;
+
 
 module core (
   input logic clk_i,
@@ -6,7 +6,8 @@ module core (
 );
 
   typedef enum logic [3:0] {
-    RESET, RESETTING, RUNNING
+    RESET, RESETTING, RUNNING,
+    FETCH, DECODE, EXEC
   } state;
   state current_state;
 
@@ -28,6 +29,8 @@ module core (
     .data_i(i_mem_data),
     .out_o(i_mem_out)
   );
+
+  assign i_mem_addr = pc;
 
   // --------------- 
   // データメモリ
@@ -60,31 +63,52 @@ module core (
     .data_i(rf_data),
     .out_o(rf_out)
   );
+
+
+  // --------------- 
+  // decoder 
+  // --------------- 
   
+  // --------------- 
+  // ALU 
+  // --------------- 
+  Alu alu_ins(
+    .clk_i(clk_i),
+    .inst_i(),
+    .operand_a_i(),
+    .operand_b_i(),
+    .result_o()
+  );
+
   always @(posedge clk_i) begin
     if (rst_i == 1'b1) begin
       current_state <= RESET;
     end
     else
-      if (current_state == RESET) begin
-        current_state <= RESETTING;
-        pc <= 32'h8000_0000;
+      unique case (current_state)
+        RESET: begin
+          current_state <= RESETTING;
+          pc <= 32'h8000_0000;
 
-        // register file
-        rf_rw <= 1'b1;
-        rf_addr <= 32'h0000_0000;
-        rf_data <= 32'h0000_0000;
-      end
-      else if (current_state == RESETTING) begin
-        rf_addr <= rf_addr + 1;
-
-        if (rf_addr == 32'h0000_001f) begin
-          current_state <= RUNNING;
-          rf_rw <= 1'b0;
+          // register file
+          rf_rw <= 1'b1;
+          rf_addr <= 32'h0000_0000;
+          rf_data <= 32'h0000_0000;
         end
-      end
-      else if (current_state == RUNNING) begin
-      end
+
+        RESETTING: begin
+          rf_addr <= rf_addr + 1;
+
+          if (rf_addr == 32'h0000_001f) begin
+            current_state <= FETCH;
+            rf_rw <= 1'b0;
+          end
+        end
+
+        FETCH: begin
+          i_mem_rw <= 1'b0;
+        end
+      endcase
     end 
   end 
 

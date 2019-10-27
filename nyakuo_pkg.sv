@@ -5,8 +5,8 @@ package nyakuo_pkg;
     SLL, SLLI, SRL, SRLI, SRA, SRAI, // Shift
     ADD, ADDI, SUB, LUI, AUIPC, // Calculate
     XOR, XORI, OR, ORI, AND, ANDI, // Logic
-    SLT, SLTU, SLTIU, // Compare
-    BEQ, BNE, SLT, BGE, BLTU, BGEU, JAL, JALR, // Branch
+    SLT, SLTU, SLTI, SLTIU, // Compare
+    BEQ, BNE, SLT, BGE, BLT, BLTU, BGEU, JAL, JALR, // Branch
     LB, LH, LBU, LHU, LW, // Load
     SB, SH, SW, // Store
 

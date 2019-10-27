@@ -16,10 +16,14 @@ module alu (
         SRL, SRLI: result_o = operand_a_i >>  operand_b_i[4:0];
         SRA, SRAI: result_o = operand_a_i >>> operand_b_i[4:0];
 
-      // Calculate
+      // TODO: Calculate
       // Logic
-      // Compare
-      // Branch
+        XOR, XORI: result_o = operand_a_i ^ operand_b_i; 
+        OR, ORI:   result_o = operand_a_i | operand_b_i; 
+        AND, ANDI: result_o = operand_a_i & operand_b_i; 
+
+      // TODO: Compare
+      // TODO: Branch
         default:;
       endcase
     end
