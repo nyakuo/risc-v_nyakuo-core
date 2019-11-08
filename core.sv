@@ -107,6 +107,11 @@ module core (
 
         FETCH: begin
           i_mem_rw <= 1'b0;
+          current_state <= DECODE;
+        end
+
+        DECODE: begin
+
         end
       endcase
     end 
