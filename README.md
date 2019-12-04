@@ -1,4 +1,4 @@
-# nyakou core
+# nyakuo core
 
 RISC-V (RV32I) を実装する。
 
