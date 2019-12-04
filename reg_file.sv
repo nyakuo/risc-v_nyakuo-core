@@ -2,10 +2,10 @@ module reg_file (
   input  logic        clk_i,
   input  logic        rst_i,
   input  logic        rw1_i, // read or write
-  input  logic [31:0] addr1_i,
+  input  logic [4:0] addr1_i,
   input  logic [31:0] data1_i,
   input  logic        rw2_i, // read or write
-  input  logic [31:0] addr2_i,
+  input  logic [4:0] addr2_i,
   input  logic [31:0] data2_i,
   output logic [31:0] data1_o,
   output logic [31:0] data2_o
@@ -24,7 +24,7 @@ module reg_file (
       for (i=0; i<32; i=i+1) begin
         regs[i] <= 32'd0;
       end
-    
+    end 
     else begin
       if (rw1_i == WRITE) begin
         regs[addr1_i] <= data1_i;
