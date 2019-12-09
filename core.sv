@@ -6,11 +6,10 @@ module Core (
   logic [31:0] pc;
 
   typedef enum logic [3:0] {
-    RUNNING = 0,
-    FETCH = 1,
-    DECODE = 2,
-    EXEC = 3,
-    WRITE_BACK = 4
+    FETCH,
+    DECODE,
+    EXEC,
+    WRITE_BACK
   } state;
   state current_state;
 
@@ -20,14 +19,14 @@ module Core (
   // ---------------
   // 命令メモリ
   // ---------------
-  logic        i_mem_rw;
+  logic        i_mem_we;
   logic [31:0] i_mem_addr;
   logic [31:0] i_mem_data;
   logic [31:0] i_mem_out;
 
   Bram i_mem(
     .clk_i(clk_i),
-    .we_i(i_mem_rw),
+    .we_i(i_mem_we),
     .addr_i(i_mem_addr),
     .data_i(i_mem_data),
     .data_o(i_mem_out)
@@ -131,7 +130,7 @@ module Core (
     // Reset
     if (rst_i == 1'b1) begin
       current_state <= FETCH;
-      pc <= 32'h8000_0000;
+      pc <= 32'h0000_0000;
 
       // register file
       rf_rw1 <= READ;
@@ -147,20 +146,19 @@ module Core (
       d_mem_data <= 32'h0000_0000;
 
       // i_mem
-      i_mem_rw <= READ;
+      i_mem_we <= 1'b0;
       i_mem_data <= 32'h0000_0000;
     end
     else begin
       case (current_state)
         FETCH: begin
-          i_mem_rw <= READ;
           current_state <= DECODE;
         end
 
         DECODE: begin
-          current_state <= EXEC;
           rf_rw1 <= READ;
           rf_rw2 <= READ;
+          current_state <= EXEC;
         end
 
         EXEC: begin
@@ -169,11 +167,20 @@ module Core (
 
         WRITE_BACK: begin
           current_state <= FETCH;
+          if (!is_branch) begin
+            pc <= pc + 1;
+          end
         end
 
         default:;
       endcase
     end
+  end
+
+  // 命令メモリの初期化 (シミュレーション向け)
+  initial begin
+    $readmemb("../test/assembly/inst-mem_data.txt", i_mem.mem);
+    $readmemb("../test/assembly/data-mem_data.txt", d_mem.mem);
   end
 
 endmodule

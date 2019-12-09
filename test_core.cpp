@@ -25,6 +25,8 @@ int main(int argc, char** argv) {
   while (!Verilated::gotFinish()) {
     if (main_time > 10)
       top->rst_i = 1;
+    if (main_time > 20)
+      top->rst_i = 0;
 
     if (main_time % 5 == 0)
       top->clk_i = !top->clk_i;
@@ -34,7 +36,7 @@ int main(int argc, char** argv) {
     printf("Time %d\n", main_time);
     tfp->dump(main_time);
 
-    if (main_time > 100)
+    if (main_time > 1000)
       break;
 
     ++main_time;

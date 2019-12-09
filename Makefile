@@ -1,13 +1,19 @@
-HDL_FILE:= nyakuo_pkg.sv\
-	bram.sv\
-	test/test_core.sv\
+HDL_FILE:=\
 	core.sv\
-	memory.sv\
-	reg_file.sv
+	bram.sv\
+	decoder.sv
 
-.PHONY: all
-all: result/core_test
-	./result/core_test
+.PHONY: all, test, clean
+all:
+	verilator -Wno-lint --trace -cc $(HDL_FILE)  --exe test_core.cpp
 
-core_test: 
-	iverilog -o result/core_test -g2005-sv ${HDL_FILE}
+test: obj_dir
+	cd obj_dir &&\
+	make -f ./Vcore.mk &&\
+  ./Vcore
+
+open: obj_dir/wave.vcd
+	open obj_dir/wave.vcd
+
+clean: obj_dir
+	rm -rf obj_dir
